@@ -38,8 +38,15 @@ public class View {
      * @return kasutaja sisestatud number
      */
     public int askGuess() {
-        System.out.print("Sisesta number: "); //kui oleks print ln, siis tuleks reavahetus ja jääks ootama, aga me tahame sama rea peale seda
-        return Integer.parseInt(scanner.nextLine());
+        while (true) {
+            System.out.print("Sisesta number: "); //kui oleks print ln, siis tuleks reavahetus ja jääks ootama, aga me tahame sama rea peale seda
+            String input = scanner.nextLine();
+            try {
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println(" Palun sisesta ainult number!");
+            }
+        }
     }
 
     /**

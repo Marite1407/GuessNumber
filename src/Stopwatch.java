@@ -46,7 +46,7 @@ public class Stopwatch {
     }
 
     /**
-     * tagastab mänguaja millisekundites
+     * tagastab mänguaja millisekundites.
      * @return mängu aeg
      */
     public long getElapsedMillis() {

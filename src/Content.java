@@ -1,61 +1,72 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * klass, mis on mõeldud edetabeli faili sisuga majandamiseks
  */
-public class Content implements Comparable<Content>{
-    private final String name; //mängija nimi
-    private final int steps; //sammude arv
+public class Content implements Comparable<Content> {
+    private final String name;  // mängija nimi
+    private final int steps;    // sammude arv
+    private final LocalDateTime playedAt; // mängu hetk
+    private final long durationMillis;    // mängu kestvus millisekundites
 
-    //2 muutujat
-
-    /**
-     * objekti loomise konstruktor
-     * @param name mängija nimi
-     * @param steps sammude arv
-     */
-    public Content(String name, int steps) {
-        this.name = name; //this. on klassi sisene. Vaata värvide järgi, lilla ja must.
+    // Uus tulemuse loomine
+    public Content(String name, int steps, long durationMillis) {
+        this.name = name;
         this.steps = steps;
+        this.playedAt = LocalDateTime.now();
+        this.durationMillis = durationMillis;
     }
 
-    //GETTERID
+    // Failist laadimiseks
+    public Content(String name, int steps, LocalDateTime playedAt, long durationMillis) {
+        this.name = name;
+        this.steps = steps;
+        this.playedAt = playedAt;
+        this.durationMillis = durationMillis;
+    }
 
-    /**
-     * tagastab mängija nime failist
-     * @return mängija nimi
-     */
+    // Getterid
     public String getName() {
         return name;
     }
 
-    /**
-     * tagastab sammude arvu
-     * @return sammude arv
-     */
     public int getSteps() {
         return steps;
     }
 
-    /**
-     * sorteerimine sammude järgi kahanevalt
-     * @param o objekt, mida võrrelda
-     * @return täisarv
-     */
-    @Override
-    public int compareTo(Content o) {
-        //return Integer.compare(o.steps, steps); //kahanevalt
-        return Integer.compare(steps, o.steps); //o on selle sama objekti. Kasvavalt (vaikimisi) .sort() .reversed()
+    public LocalDateTime getPlayedAt() {
+        return playedAt;
     }
 
-    /**
-     * vormindatud edetabel konsooli näitamiseks
-     * @return vormindatud rida
-     */
-    public String formattedData(){
-        String displayName = name.length() > 15 ? name.substring(0, 15) : String.format("%-15s", name); //võetakse nimi ja kontrollitakse.
-        // Kui nime pikkus on üle 15 märgi, siis sellest võetakse ainult esimesed 15 märki.
-        // Juhul, kui ei ole üle 15 märgi, siis võetakse esimesed 15 märki
-        String n = String.format("%-15s", displayName); //-15s on string ehk teksti vormindamine
-        String s = String.format("%3d", steps); //kolmekohaline number
-        return n + s;
+    public long getDurationMillis() {
+        return durationMillis;
+    }
+
+    public String getFormattedDateTime() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return playedAt.format(formatter);
+    }
+
+    public String getFormattedDuration() {
+        return String.format("%.2f sek", durationMillis / 1000.0);
+    }
+
+    @Override
+    public int compareTo(Content o) {
+        int bySteps = Integer.compare(this.steps, o.steps);
+        if (bySteps != 0) return bySteps;
+        return this.playedAt.compareTo(o.playedAt); // varasem aeg eespool
+    }
+
+
+    public String formattedData() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");   // teeme kuupäeva ja kellaaja eestipäraseks
+        String date = playedAt.format(formatter);
+        String displayName = name.length() > 15 ? name.substring(0, 15) : String.format("%-15s", name);
+        String n = String.format("%-15s", displayName);
+        String s = String.format("%3d", steps);
+        String time = durationMillis + " ms";   // Näitab edetabelis millisekundeid
+        return date + " | " + n + s + " sammu | " + time;
     }
 }
